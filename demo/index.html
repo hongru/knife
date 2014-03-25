@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+        <meta name="apple-touch-fullscreen" content="yes"/>
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta name="format-detection" content="telephone=no" />
+
+        <title>Knife</title>
+        <style>
+        html,body {margin:0; padding: 0}
+        canvas {
+        	position: absolute;
+        	left:0px;
+        	top:0px;
+        	background: #999;
+
+        }
+
+        </style>
+	</head>
+
+	<body>
+		<canvas id="canvas" width="400" height="600"></canvas>
+
+		<div id="log"></div>
+
+		<script type="text/javascript" src="../src/knife.js?fd"></script>
+		<script type="text/javascript">
+		if ( !window.requestAnimationFrame ) {
+ 
+			window.requestAnimationFrame = ( function() {
+		 
+				return window.webkitRequestAnimationFrame ||
+				window.mozRequestAnimationFrame ||
+				window.oRequestAnimationFrame ||
+				window.msRequestAnimationFrame ||
+				function( /* function FrameRequestCallback */ callback, /* DOMElement Element */ element ) {
+		 
+					window.setTimeout( callback, 1000 / 60 );
+		 
+				};
+		 
+			} )();
+		 
+		}
+
+		var KnifeDemo = function () {
+			var canvas, ctx;
+			var knife;
+
+			function resize () {
+				canvas.width = window.innerWidth;
+				canvas.height = window.innerHeight;
+			}
+			function bind () {
+
+			}
+			function run () {
+				ctx.clearRect(0,0,canvas.width,canvas.height);
+				knife.render();
+				requestAnimationFrame(run);
+			}
+			function init () {
+				canvas = document.getElementById('canvas');
+				ctx = canvas.getContext('2d');
+
+				knife = new lib.Knife({
+					canvas: 'canvas',
+					knifeMode: 'fill',
+					color: 'red'
+				});
+
+				resize();
+				bind();
+				run();
+			}
+			return {
+				init: init
+			}
+		}();
+
+		KnifeDemo.init();
+
+		</script>
+	</body>
+</html>
