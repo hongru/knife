@@ -1,0 +1,27 @@
+{
+  "name": "lib-game-knife",
+  "version": "0.0.1",
+  "description": "knife component based on canvas",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.alibaba-inc.com:mtb/lib-game-knife.git"
+  },
+  "keywords": [
+    "game",
+    "knife"
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-copy": "~0.4.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-less": "~0.8.2",
+    "grunt-contrib-watch": "~0.4.0"
+  },
+  "author": "canan.chr@alibaba-inc.com",
+  "license": "BSD-2-Clause"
+}
