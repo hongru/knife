@@ -37,6 +37,35 @@
 		}
 	}
 
+	function getSegLength(p0, p1) {
+			return Math.sqrt(Math.pow(p0['x']-p1['x'], 2) + Math.pow(p0['y'] - p1['y'], 2));
+		}
+		function getSegNormal(p0, p1) {
+			var l = getSegLength(p0, p1);
+			return [(p1['x'] - p0['x'])/l, (p1['y'] - p0['y'])/l];
+		}
+	function insertBezierPoints (points) {
+			if (points.length == 3) {
+				points[1].type = 'c';
+				return points;
+			} else if (points.length > 3) {
+				for (var i = 1; i < points.length - 2; i ++) {
+					var p0 = points[i],
+						p1 = points[i+1],
+						l = getSegLength(p0, p1),
+						nor = getSegNormal(p0, p1);
+					var p = {
+						type: 'c',
+						x: p0.x + nor[0]*l/2,
+						y: p0.y + nor[1]*l/2
+					};
+					points.splice(i+1, 0, p);
+					i ++;
+				}
+			}
+			return points;
+		}
+
 	var Knife = function (opt) {
 		var _defaults = {
 			pointLife: 300,
@@ -177,6 +206,8 @@
 				scaleY = this._canvasScale.scaleY;
 			}
 
+			var sharpP;
+
 			if(this.points.length >= 2) {
 				var ret = [this.points[0]];
 				var ret1 = [],
@@ -209,21 +240,45 @@
 							x: p.x + sw*2*lastNor[0],
 							y: p.y + sw*2*lastNor[1]
 						};
-						ret1.push(sharpP);
+						//ret1.push(sharpP);
 					}
 					sw += this.opt.widthStep;
 				}
 				ret = ret.concat(ret1).concat(ret2);
 
-				ctx.beginPath();
-				ctx.moveTo(ret[0].x/scaleX, ret[0].y/scaleY);
-				for (var i = 1; i < ret.length; i ++) {
-					ctx.lineTo(ret[i].x/scaleX, ret[i].y/scaleY);
-				}
+			var p = ret1;
+			p = insertBezierPoints(p);
+
+			var pp = ret2;
+			pp = insertBezierPoints(pp);
+
+			//ctx.save();
+			ctx.beginPath();
+			ctx.fillStyle = this.opt.color;
+			for (var i = 0; i < p.length-2; i += 2) {
+				ctx.lineTo(p[i].x/scaleX, p[i].y/scaleY);
+				ctx.quadraticCurveTo(p[i+1].x/scaleX, p[i+1].y/scaleY, p[i+2].x/scaleX, p[i+2].y/scaleY);
+			}
+			ctx.lineTo(sharpP.x/scaleX, sharpP.y/scaleY);
+			ctx.lineTo(pp[0].x/scaleX, pp[0].y/scaleY);
+
+			for (var i = 0; i < pp.length-2; i += 2) {
+				ctx.lineTo(pp[i].x/scaleX, pp[i].y/scaleY);
+				ctx.quadraticCurveTo(pp[i+1].x/scaleX, pp[i+1].y/scaleY, pp[i+2].x/scaleX, pp[i+2].y/scaleY);
+			}
+			ctx.closePath();
+			ctx.fill();
+			//ctx.restore();
+
+				// ctx.beginPath();
+				// ctx.moveTo(ret[0].x/scaleX, ret[0].y/scaleY);
+				// for (var i = 1; i < ret.length; i ++) {
+				// 	ctx.lineTo(ret[i].x/scaleX, ret[i].y/scaleY);
+				// }
 				
-				ctx.closePath();
-				ctx.fillStyle = this.opt.color;
-				ctx.fill();
+				// ctx.closePath();
+				// ctx.fillStyle = this.opt.color;
+				// ctx.fill();
 				// ctx.strokeStyle = '#fff';
 				// ctx.stroke();
 
